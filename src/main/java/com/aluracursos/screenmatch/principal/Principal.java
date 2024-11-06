@@ -1,8 +1,11 @@
 package com.aluracursos.screenmatch.principal;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.aluracursos.screenmatch.model.DataEpisodio;
 import com.aluracursos.screenmatch.model.DataSerie;
@@ -59,9 +62,25 @@ public class Principal {
 
         // }
 
-        // temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.numeroEpisodio() + ". " + e.titulo())));
+        // Mejora uso de operaciones lambda
+        // temporadas.forEach(t -> t.episodios().forEach(e ->
+        // System.out.println(e.numeroEpisodio() + ". " + e.titulo())));
         temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.numeroEpisodio() + ". " + e.titulo())));
 
+        // Convertir toda la informacion a una List de tipo DatosEpisodio
+
+        List<DataEpisodio> datosEpisodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream())
+                .collect(Collectors.toList());
+
+        // Top 5 Episodios
+
+        System.out.println("*****Top 5 Episodios*****");
+        datosEpisodios.stream()
+        .filter(e->!e.evaluacion().equalsIgnoreCase("N/A"))
+        .sorted(Comparator.comparing(DataEpisodio::evaluacion).reversed())
+        .limit(5)
+        .forEach(System.out::println);
     }
 
 }
