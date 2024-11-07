@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.aluracursos.screenmatch.model.DataEpisodio;
 import com.aluracursos.screenmatch.model.DataSerie;
 import com.aluracursos.screenmatch.model.DataTemporadas;
+import com.aluracursos.screenmatch.model.Episodio;
 import com.aluracursos.screenmatch.service.ConsumoApi;
 import com.aluracursos.screenmatch.service.ConvertirDatos;
 
@@ -31,7 +32,6 @@ public class Principal {
         System.out.println("******************************************");
 
         // Iterar los datos de las series
-
         List<DataTemporadas> temporadas = new ArrayList<>();
         for (int i = 1; i <= datos.totaldeTemporadas(); i++) {
             // String separador = "******************************************";
@@ -40,7 +40,6 @@ public class Principal {
             // System.out.println(separador);
             temporadas.add(datosTemporadas);
         }
-
         // temporadas.forEach(System.out::println);
         teclado.close();
 
@@ -77,10 +76,18 @@ public class Principal {
 
         System.out.println("*****Top 5 Episodios*****");
         datosEpisodios.stream()
-        .filter(e->!e.evaluacion().equalsIgnoreCase("N/A"))
-        .sorted(Comparator.comparing(DataEpisodio::evaluacion).reversed())
-        .limit(5)
-        .forEach(System.out::println);
-    }
+                .filter(e -> !e.evaluacion().equalsIgnoreCase("N/A"))
+                .sorted(Comparator.comparing(DataEpisodio::evaluacion).reversed())
+                .limit(5)
+                .forEach(System.out::println);
 
+                
+        // Convertir datos en una lista de episodios
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream()
+                        .map(d -> new Episodio(t.numeroTemporada(), d)))
+                .collect(Collectors.toList());
+
+        episodios.forEach(System.out::println);
+    }
 }
