@@ -1,10 +1,11 @@
 package com.aluracursos.screenmatch.principal;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.aluracursos.screenmatch.model.DataEpisodio;
@@ -41,7 +42,7 @@ public class Principal {
             temporadas.add(datosTemporadas);
         }
         // temporadas.forEach(System.out::println);
-        teclado.close();
+
 
         // Mostrar solo el titulo de los episodios para cada temporada
 
@@ -89,5 +90,19 @@ public class Principal {
                 .collect(Collectors.toList());
 
         episodios.forEach(System.out::println);
+
+        // Busqueda de episodios a partir de una fecha
+        System.out.println("***************************");
+
+        System.out.println("Ingresar año de episodios a buscar sobre esta: ");
+        var fecha = teclado.nextInt();
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate buscarFecha=LocalDate.of(fecha, 1, 1);
+        episodios.stream()
+                .filter(e->e.getFechaDeLanzamiento()!= null && e.getFechaDeLanzamiento().isAfter(buscarFecha))
+                .forEach(e->System.out.println(
+                        "Temporada: " + e.getTemporada() + ", Episodio: " + e.getTitulo() + ", Fecha de lanzamiento: " + e.getFechaDeLanzamiento().format(dtf)
+                ));
     }
 }
